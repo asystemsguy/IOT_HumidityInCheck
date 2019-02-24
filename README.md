@@ -4,6 +4,7 @@
 When the humidity reaches a specified level, activate one or more vent fans until the humidity is reduced to a specified level. Learn the changes in humidity based on time of day, temperature, and people present. Use this model to proactively activate the vent fans to maintain humidity levels.
 
 ## Architecture
+<pre>
 +----------------------+                                          +------------------+
 |   Temperature and    |                                          | Vent fan service |
 |   Humidity sensor    +------+       +-----------------+   +----->                  |
@@ -33,7 +34,7 @@ When the humidity reaches a specified level, activate one or more vent fans unti
                                       |                   |
                                       +-------------------+
 
-
+</pre>
 ## Application constraints
 
 1. Sensor services has to run on the device which has required hardware sensor, same applies to Vent fan service.
