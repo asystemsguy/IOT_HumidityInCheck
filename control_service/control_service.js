@@ -4,6 +4,7 @@ var temp = 0;
 var humd = 0;
 var presence = 0;
 var vent = 0;
+var predictive_switch = 0;
 function check_value(){
 
 //    receive_values();
@@ -12,14 +13,18 @@ function check_value(){
 	{
 		//if actual thresholds are exceeded switch on the vent fan
 		if(temp > 30 && humd < 50 && presence == 1) {
-		      vent  = 1;
-			activate_vent_fan();
+		    vent  = 1;
+			  activate_vent_fan(1);
+        send_to_dataagg();
 		}
+    else if(predictive_switch == 1) {
+        activate_vent_fan(1);
+    }
 		else {
 			vent = 0;
-		   activate_vent_fan();
+		   activate_vent_fan(0);
+       send_to_dataagg();
 		}
-		send_to_dataagg();
 	}
 };
 
@@ -36,6 +41,11 @@ var timer = setInterval(check_value,200);
     }
   })
   client.subscribe('humd', function (err) {
+    if (err) {
+      console.log("can't subscribe to humd");
+    }
+  })
+  client.subscribe('predictive_switch', function (err) {
     if (err) {
       console.log("can't subscribe to humd");
     }
@@ -59,15 +69,14 @@ client.on('message', function (topic, message) {
 	  } else if (topic == "humd") {
 	  	  humd = Number(message);
 	  } else if (topic == "presence") {
-	  	  presence = Number(presence);
-	  }
+	  	  presence = Number(message);
+	  } else if (topic == "predictive_switch") {
+         predictive_switch = Number(message)
+    }
 
 	  console.log(message.toString())
 	  
 	})
-
-
-timer = setInterval(check_value,200);
 
 function send_to_dataagg(){
     client.publish('agg_presence', presence.toString(), function (err) {
